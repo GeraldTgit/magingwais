@@ -316,3 +316,26 @@
   background: #9ca3af;
   cursor: not-allowed;
 }
+
+.public-checkbox {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 0.5rem;
+  font-size: 0.95rem;
+  color: #374151;
+  cursor: pointer;
+}
+
+.public-checkbox input {
+  margin-right: 0.3rem;
+  transform: scale(1.1);
+  cursor: pointer;
+}
+
+.tooltip-icon {
+  margin-left: 0.25rem;
+  font-size: 0.85rem;
+  color: #60a5fa;
+  cursor: help;
+}

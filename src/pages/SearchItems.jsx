@@ -258,10 +258,21 @@ export default function SearchItems() {
               <input
                 type="checkbox"
                 checked={newItem.is_public}
-                onChange={(e) => setNewItem({ ...newItem, is_public: e.target.checked })}
+                onChange={(e) =>
+                  setNewItem({ ...newItem, is_public: e.target.checked })
+                }
               />
-              Make it public
+              <span>
+                Make it public
+                <span
+                  className="tooltip-icon"
+                  title="Public items can be viewed by all users and added to any list."
+                >
+                  ℹ️
+                </span>
+              </span>
             </label>
+
 
             <div className="modal-buttons">
               <button onClick={handleSubmitNewItem}>Submit</button>
