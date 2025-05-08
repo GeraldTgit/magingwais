@@ -41,7 +41,7 @@ export default function Signup() {
   return (
     <div className="page-container">
       <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
-        <div className="card-container">
+        <div className="signup-card-container">
           <div className="logo-container">
             <img src={Logo} alt="Company Logo" className="company-logo" />
           </div>

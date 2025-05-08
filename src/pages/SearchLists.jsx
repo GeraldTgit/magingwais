@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { FaEdit, FaTrash } from "react-icons/fa";
+import { FaEdit, FaTrash, FaListUl } from "react-icons/fa";
 import CreateNewListImg from "../images/CreateNewList.png";
 import "./SearchLists.css";
+import BurgerMenu from "../components/BurgerMenu";
 import supabase from '../lib/supabaseClient';
+
 
 export default function SearchLists() {
   const [user, setUser] = useState(null);
@@ -14,6 +16,7 @@ export default function SearchLists() {
   const [showModal, setShowModal] = useState(false);
   const [selectedListId, setSelectedListId] = useState(null);
   const navigate = useNavigate();
+  const [showListItemsModal, setShowListItemsModal] = useState(false);
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
@@ -27,7 +30,15 @@ export default function SearchLists() {
   }, [viewPublic]);
 
   const fetchShoppingLists = async (userInfo, publicView) => {
-    let query = supabase.from("shopping_lists").select("*");
+    let query = supabase
+      .from("shopping_lists")
+      .select(`
+        *,
+        creator:users!shopping_lists_user_id_fkey (
+          nickname,
+          name
+        )
+      `);
 
     if (publicView) {
       query = query.eq("is_public", true);
@@ -86,10 +97,11 @@ export default function SearchLists() {
   if (!user) return <div className="loading-screen">Loading...</div>;
 
   return (
-    <div className="page-container">
+    <div className="page-container-sl" style={{ position: "relative" }}>
+      {/**Confirm delete a List Modal */}
       {showModal && (
-        <div className="modal-overlay">
-          <div className="modal-container">
+        <div className="modal-overlay-sl">
+          <div className="modal-container-sl">
             <h2 className="modal-title">Confirm Deletion</h2>
             <p className="modal-text">
               Are you sure you want to delete this list? This action is irrevocable.
@@ -102,8 +114,33 @@ export default function SearchLists() {
         </div>
       )}
 
-      <div className="card-container">
-        <h1 className="page-title">Your Shopping Lists</h1>
+
+      <div className="card-container-sl">
+        {/* Options */}
+        <BurgerMenu currentPage="search-lists" /> 
+
+        <h1 className="page-title">Shopping Lists 🧾</h1>
+
+        <div className="search-bar">
+          <input
+            type="text"
+            placeholder="Search shopping lists..."
+            value={searchTerm}
+            onChange={handleSearch}
+            className="search-input"
+          />
+        </div>
+
+        <div className="floating-btn-container-sl">
+          <button
+            className="floating-go-btn-sl"
+            onClick={() => navigate("/search-items")}
+          >
+            <FaListUl className="btn-icon-sl" />
+            Search for Items
+            <span className="badge-sl">!</span>
+          </button>
+        </div>
 
         <div className="toggle-buttons">
           <button
@@ -120,16 +157,6 @@ export default function SearchLists() {
           </button>
         </div>
 
-        <div className="search-bar">
-          <input
-            type="text"
-            placeholder="Search shopping lists..."
-            value={searchTerm}
-            onChange={handleSearch}
-            className="search-input"
-          />
-        </div>
-
         {filteredLists.length === 0 ? (
           <div className="no-lists-container">
             <p className="no-lists-text">No shopping lists found.</p>
@@ -140,7 +167,8 @@ export default function SearchLists() {
               <li
                 key={list.id}
                 className="list-item"
-              >
+                onClick={() => navigate(`/list/${list.id}`)}
+              >            
                 <div className="list-item-header">
                   <span>{list.name || "(Unnamed List)"}</span>
                   {!viewPublic && (
@@ -148,14 +176,24 @@ export default function SearchLists() {
                       <FaEdit className="edit-icon" />
                       <FaTrash
                         className="delete-icon"
-                        onClick={() => openDeleteModal(list.id)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          openDeleteModal(list.id);
+                        }}
                       />
                     </div>
                   )}
                 </div>
-                {list.is_public && (
-                  <span className="public-badge">Public</span>
-                )}
+                <div className="list-item-info">
+                  {list.is_public && (
+                    <span className="public-badge">Public</span>
+                  )}
+                  {viewPublic && list.creator && (
+                    <span className="creator-badge">
+                      By: {list.creator.nickname || "no nickname yet"}
+                    </span>
+                  )}
+                </div>
               </li>
             ))}
           </ul>

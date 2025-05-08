@@ -8,7 +8,7 @@
 }
 
 /* Center card */
-.card-container {
+.signup-card-container {
   width: 100%;
   max-width: 500px;
   background: white;
@@ -80,7 +80,6 @@
 
 .modal-container input {
   width: 100%;
-  margin-bottom: 0.75rem;
   padding: 0.5rem;
   border-radius: 0.5rem;
   border: 1px solid #ccc;

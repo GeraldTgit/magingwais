@@ -9,10 +9,10 @@
   padding: 2rem;
 }
 
-.card-container {
+.card-container-sl {
   background: #ffffff;
   width: 100%;
-  max-width: 50rem;
+  max-width: 60rem;
   border-radius: 1.25rem;
   padding: 2.5rem;
   box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.1);
@@ -133,6 +133,7 @@
   justify-content: center;
   gap: 1rem;
   margin-bottom: 1.5rem;
+  margin-top: 1.5rem;
 }
 
 .toggle-button {
@@ -230,7 +231,7 @@
   transform: scale(1.2);
 }
 
-.modal-overlay {
+.modal-overlay-sl {
   position: fixed;
   inset: 0;
   background: rgba(0, 0, 0, 0.6);
@@ -240,7 +241,7 @@
   z-index: 50;
 }
 
-.modal-container {
+.modal-container-sl {
   background: white;
   padding: 2rem;
   border-radius: 1rem;
@@ -293,4 +294,66 @@
 
 .modal-delete:hover {
   background: #dc2626;
+}
+
+.floating-btn-container {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.floating-go-btn-sl {
+  margin-top: 0.25rem;
+  margin-left: 0.5rem;
+  display: flex;
+  align-items: center;
+  background: #10b981;
+  color: white;
+  font-weight: 600;
+  padding: 0.5rem 1rem;
+  border-radius: 0.75rem;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(16, 185, 129, 0.4);
+  position: relative;
+  transition: all 0.25s ease;
+}
+
+.floating-go-btn-sl:hover {
+  background: #059669;
+  transform: translateY(-2px);
+}
+
+.btn-icon-sl {
+  margin-right: 0.5rem;
+  font-size: 1.2rem;
+}
+
+.badge-sl {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background: red;
+  color: white;
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 0.2rem 0.45rem;
+  border-radius: 9999px;
+}
+
+.list-item-info {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.creator-badge {
+  background-color: #6366f1;
+  color: white;
+  padding: 0.2rem 0.6rem;
+  font-size: 0.75rem;
+  border-radius: 9999px;
+  font-weight: 600;
 }

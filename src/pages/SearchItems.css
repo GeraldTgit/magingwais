@@ -1,4 +1,4 @@
-.page-container {
+.page-container-sl {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -7,7 +7,7 @@
   padding: 2rem;
 }
 
-.card-container {
+.search-items-card-container {
   background: #ffffff;
   width: 100%;
   max-width: 60rem;
@@ -185,7 +185,7 @@
   border: 1px solid #d1d5db;
   border-radius: 0.5rem;
   font-size: 0.95rem;
-  color: #374151;
+  color: #ced1d6;
 }
 
 .clickable {
@@ -338,4 +338,30 @@
   font-size: 0.85rem;
   color: #60a5fa;
   cursor: help;
+}
+
+.toggle-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.toggle-button {
+  padding: 0.5rem 1.5rem;
+  background-color: #e5e7eb;
+  border-radius: 0.75rem;
+  font-weight: 600;
+  color: #374151;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.toggle-button:hover {
+  background-color: #d1d5db;
+}
+
+.toggle-button.active {
+  background-color: #2563eb;
+  color: white;
 }

@@ -3,6 +3,9 @@ import { useNavigate } from "react-router-dom";
 import { FaListUl } from "react-icons/fa";
 import supabase from '../lib/supabaseClient';
 import "./SearchItems.css";
+import AddItemModal from "../components/AddItemModal";
+import ItemInfoModal from "../components/ItemInfoModal";
+import BurgerMenu from "../components/BurgerMenu";
 import DummyImage from "../images/dummy-item.png";
 import ListedImage from "../images/added.png";
 
@@ -22,6 +25,7 @@ export default function SearchItems() {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
   const [showAddItemModal, setShowAddItemModal] = useState(false);
+  const [viewPublic, setViewPublic] = useState(false);
   const [newItem, setNewItem] = useState({
     item_name: "",
     brand: "",
@@ -34,20 +38,7 @@ export default function SearchItems() {
   useEffect(() => {
     fetchItems();
     fetchUserLists();
-  }, []);
-
-  const fetchItems = async () => {
-    const { data, error } = await supabase
-      .from("items")
-      .select("*");
-  
-    if (error) {
-      console.error("Error fetching items:", error);
-    } else {
-      setItems(data);
-      setFilteredItems(data);
-    }
-  };
+  }, [viewPublic]);
 
   const fetchUserLists = async () => {
     const storedUser = localStorage.getItem("user");
@@ -63,6 +54,30 @@ export default function SearchItems() {
     if (error) console.error("Error fetching lists:", error);
     else setUserLists(data);
   };
+
+  const fetchItems = async () => {
+    const storedUser = localStorage.getItem("user");
+    if (!storedUser) return;
+    
+    const user = JSON.parse(storedUser);
+    
+    let query = supabase.from("items").select("*");
+    
+    if (viewPublic) {
+      query = query.eq("is_public", true);
+    } else {
+      query = query.eq("added_by", user.google_id);
+    }
+    
+    const { data, error } = await query;
+    
+    if (error) {
+      console.error("Error fetching items:", error);
+    } else {
+      setItems(data);
+      setFilteredItems(data);
+    }
+  };  
 
   useEffect(() => {
     let temp = [...items];
@@ -168,121 +183,31 @@ export default function SearchItems() {
     if (currentPage > 1) setCurrentPage(currentPage - 1);
   };
 
-  const handleSubmitNewItem = async () => {
-    if (!newItem.item_name || !newItem.description || !newItem.average_price || !newItem.srp) {
-      alert("Please fill in required fields.");
-      return;
-    }
-  
-    const { error } = await supabase.from("items").insert({
-      item_name: newItem.item_name,
-      brand: newItem.brand || "N/A",
-      description: newItem.description,
-      specification: newItem.specification,
-      srp: parseFloat(newItem.srp),
-      is_public: newItem.is_public
-    });
-  
-    if (error) {
-      console.error("Error adding item:", error);
-      alert("Failed to add item.");
-    } else {
-      alert("Item submitted!");
-      setShowAddItemModal(false);
-      setNewItem({
-        item_name: "",
-        brand: "",
-        description: "",
-        specification: "",
-        average_price: "",
-        srp: ""
-      });
-      fetchItems(); // refresh the item list
-    }
-  };  
-
   return (
-    <div className="page-container">
-      {/* Modal */}
+    <div className="page-container" style={{ position: "relative" }}>
+      
+      {/* View item info Modal */}
       {showModal && modalItem && (
-        <div className="modal-overlay">
-          <div className="modal-container">
-            <h2 className="modal-title">{modalItem.name}</h2>
-            <p className="modal-text">{modalItem.description}</p>
-            <p className="modal-text">{modalItem.specification}</p>
-            <p className="modal-text">Average Price: ₱{modalItem.average_price.toLocaleString()}</p>
-            <p className="modal-text">SRP: ₱{modalItem.srp.toLocaleString()}</p>
-            <button className="modal-close" onClick={() => setShowModal(false)}>Close</button>
-          </div>
-        </div>
-      )}
-      {/* Add New Item Modal */}
-      {showAddItemModal && (
-        <div className="modal-overlay">
-          <div className="modal-container">
-            <h2 className="modal-title">Add New Item</h2>
-
-            <input
-              type="text"
-              placeholder="Item Name"
-              value={newItem.item_name}
-              onChange={(e) => setNewItem({ ...newItem, item_name: e.target.value })}
-            />
-            <input
-              type="text"
-              placeholder="Brand (optional)"
-              value={newItem.brand}
-              onChange={(e) => setNewItem({ ...newItem, brand: e.target.value })}
-            />
-            <input
-              type="text"
-              placeholder="Description"
-              value={newItem.description}
-              onChange={(e) => setNewItem({ ...newItem, description: e.target.value })}
-            />
-            <input
-              type="text"
-              placeholder="Specification"
-              value={newItem.specification}
-              onChange={(e) => setNewItem({ ...newItem, specification: e.target.value })}
-            />
-            <input
-              type="number"
-              placeholder="SRP"
-              value={newItem.srp}
-              onChange={(e) => setNewItem({ ...newItem, srp: e.target.value })}
-            />
-
-            {/* Public checkbox */}
-            <label className="public-checkbox">
-              <input
-                type="checkbox"
-                checked={newItem.is_public}
-                onChange={(e) =>
-                  setNewItem({ ...newItem, is_public: e.target.checked })
-                }
-              />
-              <span>
-                Make it public
-                <span
-                  className="tooltip-icon"
-                  title="Public items can be viewed by all users and added to any list."
-                >
-                  ℹ️
-                </span>
-              </span>
-            </label>
-
-
-            <div className="modal-buttons">
-              <button onClick={handleSubmitNewItem}>Submit</button>
-              <button onClick={() => setShowAddItemModal(false)}>Cancel</button>
-            </div>
-          </div>
-        </div>
+        <ItemInfoModal
+          item={modalItem}
+          onClose={() => setShowModal(false)}
+          currentUserId={JSON.parse(localStorage.getItem("user"))?.google_id}
+        />
       )}
 
-      <div className="card-container">
+
+      {/* AddItemModal goes here */}
+      <AddItemModal
+        newItem={newItem}
+        setNewItem={setNewItem}
+        showAddModal={showAddItemModal}
+        setShowAddModal={setShowAddItemModal}
+      />
+      
+      <div className="search-items-card-container">
+        {/* Options */}
+        <BurgerMenu currentPage="search-items" />
+
         <h1 className="page-title">Search Items</h1>
 
         {/* Filters and Sort */}
@@ -325,12 +250,12 @@ export default function SearchItems() {
             onChange={(e) => setSelectedList(e.target.value)}
             className="filter-select"
           >
-            <option value="">Select Shopping List</option>
+            <option value="">Select Shopping List 🧾</option>
             {userLists.map(list => (
-              <option key={list.id} value={list.id}>{list.name}</option>
+              <option key={list.id} value={list.id}>{list.name} 🧾</option>
             ))}
           </select>
-          <div className="floating-btn-container">
+        <div className="floating-btn-container">
           <button
             className="floating-go-btn"
             onClick={() => navigate("/search-lists")}
@@ -340,6 +265,22 @@ export default function SearchItems() {
             <span className="badge">!</span>
           </button>
         </div>
+      </div>
+
+        {/**Items viewing options */}
+        <div className="toggle-buttons">
+          <button
+            onClick={() => setViewPublic(false)}
+            className={`toggle-button ${!viewPublic ? "active" : ""}`}
+          >
+            My Items
+          </button>
+          <button
+            onClick={() => setViewPublic(true)}
+            className={`toggle-button ${viewPublic ? "active" : ""}`}
+          >
+            Public Items
+          </button>
         </div>
 
         {/* Items List */}
@@ -358,15 +299,24 @@ export default function SearchItems() {
                       {item.name} {item.brand && ` ${item.brand}`}
                     </div>
                     <div className="item-price">
-                      Ave Price: ₱{item.average_price.toLocaleString()}
+                      Ave Price: ₱{item.average_price != null ? item.average_price.toLocaleString() : "N/A"}
                     </div>
                   </div>
                   <div className="item-bottom">
                     <div className="item-spec">
-                      {item.specification}
+                      {item.description == null
+                        ? item.specification
+                        : (
+                            <>
+                              {item.description}
+                              <br />
+                              {item.specification}
+                            </>
+                          )
+                      }
                     </div>
                     <div className="item-srp">
-                      SRP: ₱{item.srp.toLocaleString()}
+                      SRP: ₱{item.srp != null ? item.srp.toLocaleString() : "N/A"}
                     </div>
                   </div>
                 </div>
