@@ -1,0 +1,334 @@
+/* SearchLists.css */
+
+.page-container-sl {
+  min-height: 100vh;
+  background-color: #f3f4f6;
+  padding: 1rem;
+  padding-top: 4rem;
+  position: flex;
+}
+
+.card-container-sl {
+  max-width: 1200px;
+  margin: 0 auto;
+  background: white;
+  border-radius: 1rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  padding: 2rem;
+  position: flex;
+}
+
+.page-title-sl {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #1f2937;
+  padding-bottom: 1rem;
+  text-align: center;
+}
+
+.search-container {
+  margin-bottom: 1.5rem;
+}
+
+.search-input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  transition: all 0.2s;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
+}
+
+.view-toggle {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  justify-content: center;
+}
+
+.toggle-btn {
+  padding: 0.75rem 1.5rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  background: white;
+  color: #4b5563;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.toggle-btn:hover {
+  background: #f9fafb;
+  color: #1f2937;
+}
+
+.toggle-btn.active {
+  background: #2563eb;
+  color: white;
+  border-color: #2563eb;
+}
+
+.list-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.list-item {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  transition: all 0.2s;
+}
+
+.list-item:hover {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+.list-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.list-item-header span {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.icon-buttons {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.edit-icon,
+.delete-icon {
+  font-size: 1.25rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.edit-icon {
+  color: #2563eb;
+}
+
+.edit-icon:hover {
+  color: #1d4ed8;
+}
+
+.delete-icon {
+  color: #ef4444;
+}
+
+.delete-icon:hover {
+  color: #dc2626;
+}
+
+.list-item-info {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.public-badge,
+.creator-badge {
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.875rem;
+}
+
+.public-badge {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.creator-badge {
+  background: #f3f4f6;
+  color: #4b5563;
+}
+
+.list-item-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.view-items-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.25rem;
+  background: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.view-items-btn:hover {
+  background: #1d4ed8;
+}
+
+.view-items-icon {
+  font-size: 1rem;
+}
+
+.create-new-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 2rem;
+}
+
+.create-new-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.create-new-button:hover {
+  transform: scale(1.05);
+}
+
+.create-new-image {
+  width: 200px;
+  height: auto;
+}
+
+.no-lists-container {
+  text-align: center;
+  padding: 2rem;
+  color: #6b7280;
+}
+
+.no-lists-text {
+  font-size: 1.125rem;
+}
+
+/* Modal Styles */
+.modal-overlay-sl {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-container-sl {
+  background: white;
+  padding: 2rem;
+  border-radius: 0.75rem;
+  width: 90%;
+  max-width: 500px;
+}
+
+.modal-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 1rem;
+}
+
+.modal-text {
+  color: #4b5563;
+  margin-bottom: 1.5rem;
+}
+
+.modal-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+}
+
+.modal-cancel,
+.modal-delete {
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.modal-cancel {
+  background: white;
+  border: 1px solid #e5e7eb;
+  color: #4b5563;
+}
+
+.modal-cancel:hover {
+  background: #f9fafb;
+  color: #1f2937;
+}
+
+.modal-delete {
+  background: #ef4444;
+  border: none;
+  color: white;
+}
+
+.modal-delete:hover {
+  background: #dc2626;
+}
+
+/* Loading Screen */
+.loading-screen {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #f3f4f6;
+  color: #6b7280;
+  font-size: 1.25rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .page-container-sl {
+    padding: 1rem;
+  }
+
+  .card-container-sl {
+    padding: 1rem;
+  }
+
+  .page-title {
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .list-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .list-item {
+    padding: 1rem;
+  }
+
+  .list-item-header span {
+    font-size: 1.125rem;
+  }
+
+  .view-items-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}

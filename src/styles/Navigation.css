@@ -1,0 +1,93 @@
+.top-nav {
+  position: sticky;
+  top: 0;
+  left: 0;
+  right: 0;
+  background-color: white;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  padding: 0.75rem 1rem;
+}
+
+.nav-buttons {
+  width: 100%;
+  max-width: 60rem;
+  margin: 0 auto;
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  background: white;
+  padding: 0.5rem;
+  border-radius: 0.75rem;
+}
+
+.nav-button {
+  flex: 1;
+  min-width: 120px;
+  max-width: 200px;
+  padding: 0.75rem 1rem;
+  border: 1px solid #e5e7eb;
+  background: white;
+  color: #4b5563;
+  font-size: clamp(0.875rem, 1.5vw, 1rem);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-radius: 0.5rem;
+  transition: all 0.2s;
+  white-space: nowrap;
+  font-weight: 500;
+  justify-content: center;
+}
+
+.nav-button:hover {
+  background-color: #f3f4f6;
+  color: #1f2937;
+  border-color: #d1d5db;
+}
+
+.nav-button svg {
+  width: clamp(1rem, 1.5vw, 1.25rem);
+  height: clamp(1rem, 1.5vw, 1.25rem);
+}
+
+/* Mobile Navigation */
+@media (max-width: 640px) {
+  .nav-buttons {
+    padding: 0.5rem;
+    gap: 0.5rem;
+  }
+
+  .nav-button {
+    flex: 1;
+    min-width: 100px;
+    max-width: 150px;
+    padding: 0.75rem 0.75rem;
+    font-size: 0.875rem;
+  }
+
+  .nav-button svg {
+    width: 1rem;
+    height: 1rem;
+  }
+}
+
+/* Tablet Navigation */
+@media (min-width: 641px) and (max-width: 1024px) {
+  .nav-button {
+    flex: 1;
+    min-width: 140px;
+    max-width: 180px;
+  }
+}
+
+/* Large Screen Navigation */
+@media (min-width: 1025px) {
+  .nav-button {
+    flex: 1;
+    min-width: 160px;
+    max-width: 200px;
+  }
+} 

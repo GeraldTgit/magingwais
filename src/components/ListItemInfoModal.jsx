@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import supabase from '../lib/supabaseClient';
-import "./ListItemInfoModal.css";
+import "../styles/ListItemInfoModal.css";
 
 const ListItemInfoModal = ({ item, onClose, onItemUpdated, onItemDeleted, isOwner }) => {
   const [isEditing, setIsEditing] = useState(false);

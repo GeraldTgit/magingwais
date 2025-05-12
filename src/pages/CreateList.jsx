@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "./CreateList.css";
-import supabase from '../lib/supabaseClient';
+import { supabase } from "../supabaseClient";
+import "../styles/CreateList.css";
 
 export default function CreateList() {
   const [listName, setListName] = useState("");
@@ -63,13 +63,22 @@ export default function CreateList() {
           Make Public
         </label>
 
-        <button
-          onClick={handleCreateList}
-          className="create-list-button"
-          disabled={loading}
-        >
-          {loading ? "Creating..." : "Create List"}
-        </button>
+        <div className="button-container">
+          <button
+            onClick={handleCreateList}
+            className="create-list-button"
+            disabled={loading}
+          >
+            {loading ? "Creating..." : "Create List"}
+          </button>
+          <button
+            onClick={() => navigate("/search-lists")}
+            className="cancel-list-button"
+            disabled={loading}
+          >
+            Cancel
+          </button>
+        </div>
       </div>
     </div>
   );

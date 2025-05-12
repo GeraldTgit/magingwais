@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import supabase from "../lib/supabaseClient";
-import "./AddItemModal.css";
+import "../styles/AddItemModal.css";
 
 export default function AddItemModal({
   newItem,

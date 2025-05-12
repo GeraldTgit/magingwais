@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { FaListUl, FaSearch, FaPlus, FaEdit } from "react-icons/fa";
-import supabase from '../lib/supabaseClient';
-import BurgerMenu from '../components/BurgerMenu';
-import "./Dashboard.css";
+import { supabase } from "../supabaseClient";
+import "../styles/Dashboard.css";
+import Navigation from '../components/Navigation';
 
 export default function Dashboard() {
   const [user, setUser] = useState(null);
@@ -85,14 +84,17 @@ export default function Dashboard() {
     }
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem("user");
+    navigate("/signup");
+  };
+
   if (!user) return <div className="loading-screen">Loading...</div>;
 
   return (
-    <div className="dashboard-page" style={{ position: "relative" }}>
+    <div className="page-container-db">
       <div className="dashboard-container">
-        {/* Burger Menu */}
-        <BurgerMenu currentPage="dashboard" />
-
+        <h1 className="page-title">Dashboard</h1>
         <div className="profile-section">
           <img
             src={user.picture_url}
@@ -140,7 +142,7 @@ export default function Dashboard() {
                   className="edit-nickname-button"
                   onClick={() => setIsEditingNickname(true)}
                 >
-                  <FaEdit />
+                  Edit
                 </button>
               </div>
             )}
@@ -171,21 +173,18 @@ export default function Dashboard() {
             className="action-button primary"
             onClick={() => navigate("/search-lists")}
           >
-            <FaListUl />
             My Lists
           </button>
           <button 
             className="action-button"
             onClick={() => navigate("/search-items")}
           >
-            <FaSearch />
             Search Items
           </button>
           <button 
             className="action-button"
             onClick={() => navigate("/create-list")}
           >
-            <FaPlus />
             Create List
           </button>
         </div>

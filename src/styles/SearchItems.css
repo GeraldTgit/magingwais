@@ -12,16 +12,17 @@
   width: 100%;
   max-width: 60rem;
   border-radius: 1.25rem;
-  padding: 2.5rem;
+  position: sticky;
   box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.1);
 }
 
-.page-title {
+.page-title-si {
   font-size: 2rem;
   font-weight: 700;
   text-align: center;
   margin-bottom: 2rem;
   color: #1f2937;
+  padding: 1.5rem 1.5rem 0;
 }
 
 .search-bar {
@@ -41,73 +42,8 @@
 .item-grid {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
-}
-
-.item-card {
-  display: flex;
-  background: #f9fafb;
-  border: 1px solid #d1d5db;
-  border-radius: 0.75rem;
-  overflow: hidden;
-  transition: background-color 0.2s ease, transform 0.2s ease;
-}
-
-.item-card:hover {
-  background: #e5e7eb;
-  transform: scale(1.01);
-}
-
-.item-image {
-  width: 120px;
-  height: 120px;
-  object-fit: cover;
-  border-right: 1px solid #d1d5db;
-}
-
-.item-info {
-  padding: 1rem;
-  flex: 1;
-  color: #374151;
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-}
-
-.item-name {
-  font-size: 1.25rem;
-  font-weight: 700;
-}
-
-.item-brand {
-  font-size: 0.9rem;
-  color: #6b7280;
-}
-
-.item-description {
-  font-size: 0.95rem;
-}
-
-.item-specification {
-  font-size: 0.85rem;
-  color: #6b7280;
-}
-
-.item-pricing {
-  font-size: 1rem;
-  font-weight: 600;
-  color: #1f2937;
-  margin-top: 0.25rem;
-}
-
-.price-label {
-  font-weight: 600;
-}
-
-.item-grid {
-  display: flex;
-  flex-direction: column;
   gap: 1rem;
+  padding-inline-start: 0rem;
 }
 
 .item-card {
@@ -119,6 +55,7 @@
   overflow: hidden;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   transition: transform 0.2s ease;
+  width: 100%;
 }
 
 .item-card:hover {
@@ -177,6 +114,7 @@
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   gap: 1rem;
   margin-bottom: 2rem;
+  padding: 0 1.5rem;
 }
 
 .filter-input,
@@ -185,7 +123,8 @@
   border: 1px solid #d1d5db;
   border-radius: 0.5rem;
   font-size: 0.95rem;
-  color: #ced1d6;
+  color: #9fa4ad;
+  width: 100%;
 }
 
 .clickable {
@@ -246,52 +185,7 @@
 }
 
 .item-card {
-  position: relative; /* for splash positioning */
-}
-
-.floating-btn-container {
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-}
-
-.floating-go-btn {
-  margin-top: 0.25rem;
-  margin-left: 0.5rem;
-  display: flex;
-  align-items: center;
-  background: #10b981;
-  color: white;
-  font-weight: 600;
-  padding: 0.5rem 1rem;
-  border-radius: 0.75rem;
-  border: none;
-  cursor: pointer;
-  box-shadow: 0 2px 6px rgba(16, 185, 129, 0.4);
   position: relative;
-  transition: all 0.25s ease;
-}
-
-.floating-go-btn:hover {
-  background: #059669;
-  transform: translateY(-2px);
-}
-
-.btn-icon {
-  margin-right: 0.5rem;
-  font-size: 1.2rem;
-}
-
-.badge {
-  position: absolute;
-  top: -5px;
-  right: -5px;
-  background: red;
-  color: white;
-  font-size: 0.65rem;
-  font-weight: 700;
-  padding: 0.2rem 0.45rem;
-  border-radius: 9999px;
 }
 
 .pagination {
@@ -300,6 +194,7 @@
   align-items: center;
   gap: 1rem;
   margin-top: 2rem;
+  padding: 0 1.5rem 1.5rem;
 }
 
 .pagination button {
@@ -344,24 +239,54 @@
   display: flex;
   justify-content: center;
   gap: 1rem;
-  margin-bottom: 1.5rem;
+  margin: 1.5rem 0;
+  padding: 0 1.5rem;
 }
 
 .toggle-button {
-  padding: 0.5rem 1.5rem;
-  background-color: #e5e7eb;
-  border-radius: 0.75rem;
-  font-weight: 600;
-  color: #374151;
+  padding: 0.75rem 2rem;
+  border: 2px solid #e5e7eb;
+  background: white;
+  color: #4b5563;
+  font-size: 0.8rem;
+  font-weight: 500; 
   cursor: pointer;
-  transition: background-color 0.3s ease, color 0.3s ease;
+  border-radius: 0.5rem;
+  transition: all 0.2s;
+  min-width: 180px;
 }
 
 .toggle-button:hover {
-  background-color: #d1d5db;
+  border-color: #d1d5db;
+  background-color: #f9fafb;
 }
 
 .toggle-button.active {
   background-color: #2563eb;
   color: white;
+  border-color: #2563eb;
 }
+
+.toggle-button.active:hover {
+  background-color: #1d4ed8;
+  border-color: #1d4ed8;
+}
+
+.page-container-si {
+  min-height: 100vh;
+  background-color: #f3f4f6;
+  padding: 1rem;
+  padding-top: 4rem;
+}
+
+.card-container-si {
+  width: 100%;
+  max-width: 60rem;
+  position: sticky;
+  margin: 0 auto;
+  background-color: white;
+  border-radius: 0.75rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Removing navigation styles as they are now in Navigation.css */

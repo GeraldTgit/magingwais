@@ -5,7 +5,6 @@
 }
 
 .dashboard-container {
-  max-width: 800px;
   margin: 0 auto;
   background: white;
   border-radius: 1rem;
@@ -248,4 +247,13 @@
   .quick-actions {
     grid-template-columns: 1fr;
   }
-} 
+}
+
+.page-container-db {
+  min-height: 100vh;
+  background-color: #f3f4f6;
+  padding: 1rem;
+  padding-top: 4rem;
+}
+
+/* Removing navigation styles as they are now in Navigation.css */ 

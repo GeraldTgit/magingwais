@@ -1,11 +1,10 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { FaEdit, FaTrash, FaListUl } from "react-icons/fa";
+import { FaEdit, FaTrash, FaListUl, FaHome, FaList, FaUser, FaSignOutAlt } from "react-icons/fa";
 import CreateNewListImg from "../images/CreateNewList.png";
-import "./SearchLists.css";
-import BurgerMenu from "../components/BurgerMenu";
+import "../styles/SearchLists.css";
 import supabase from '../lib/supabaseClient';
-
+import Navigation from '../components/Navigation';
 
 export default function SearchLists() {
   const [user, setUser] = useState(null);
@@ -16,7 +15,6 @@ export default function SearchLists() {
   const [showModal, setShowModal] = useState(false);
   const [selectedListId, setSelectedListId] = useState(null);
   const navigate = useNavigate();
-  const [showListItemsModal, setShowListItemsModal] = useState(false);
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
@@ -94,10 +92,23 @@ export default function SearchLists() {
     }
   };
 
+  const handleViewItems = (listId) => {
+    navigate(`/list/${listId}`);
+  };
+
+  const handleItemsUpdated = () => {
+    fetchShoppingLists(user, viewPublic);
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("user");
+    navigate("/signup");
+  };
+
   if (!user) return <div className="loading-screen">Loading...</div>;
 
   return (
-    <div className="page-container-sl" style={{ position: "relative" }}>
+    <div className="page-container-sl">
       {/**Confirm delete a List Modal */}
       {showModal && (
         <div className="modal-overlay-sl">
@@ -114,44 +125,29 @@ export default function SearchLists() {
         </div>
       )}
 
-
       <div className="card-container-sl">
-        {/* Options */}
-        <BurgerMenu currentPage="search-lists" /> 
+        <h1 className="page-title-sl">Shopping Lists 🧾</h1>
 
-        <h1 className="page-title">Shopping Lists 🧾</h1>
-
-        <div className="search-bar">
+        <div className="search-container">
           <input
             type="text"
-            placeholder="Search shopping lists..."
+            placeholder="Search lists..."
             value={searchTerm}
             onChange={handleSearch}
             className="search-input"
           />
         </div>
 
-        <div className="floating-btn-container-sl">
+        <div className="view-toggle">
           <button
-            className="floating-go-btn-sl"
-            onClick={() => navigate("/search-items")}
-          >
-            <FaListUl className="btn-icon-sl" />
-            Search for Items
-            <span className="badge-sl">!</span>
-          </button>
-        </div>
-
-        <div className="toggle-buttons">
-          <button
+            className={`toggle-btn ${!viewPublic ? 'active' : ''}`}
             onClick={() => setViewPublic(false)}
-            className={`toggle-button ${!viewPublic ? "active" : ""}`}
           >
             My Lists
           </button>
           <button
+            className={`toggle-btn ${viewPublic ? 'active' : ''}`}
             onClick={() => setViewPublic(true)}
-            className={`toggle-button ${viewPublic ? "active" : ""}`}
           >
             Public Lists
           </button>
@@ -167,13 +163,15 @@ export default function SearchLists() {
               <li
                 key={list.id}
                 className="list-item"
-                onClick={() => navigate(`/list/${list.id}`)}
               >            
                 <div className="list-item-header">
                   <span>{list.name || "(Unnamed List)"}</span>
                   {!viewPublic && (
                     <div className="icon-buttons">
-                      <FaEdit className="edit-icon" />
+                      <FaEdit 
+                        className="edit-icon"
+                        onClick={() => navigate(`/list/${list.id}`)}
+                      />
                       <FaTrash
                         className="delete-icon"
                         onClick={(e) => {
@@ -193,6 +191,15 @@ export default function SearchLists() {
                       By: {list.creator.nickname || "no nickname yet"}
                     </span>
                   )}
+                </div>
+                <div className="list-item-actions">
+                  <button
+                    className="view-items-btn"
+                    onClick={() => handleViewItems(list.id)}
+                  >
+                    <FaListUl className="view-items-icon" />
+                    View Items
+                  </button>
                 </div>
               </li>
             ))}

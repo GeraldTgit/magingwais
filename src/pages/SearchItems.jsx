@@ -1,15 +1,16 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { FaListUl } from "react-icons/fa";
+import { useNavigate, useLocation } from "react-router-dom";
+import { FaListUl, FaHome, FaList, FaUser, FaSignOutAlt, FaEdit, FaTrash } from "react-icons/fa";
 import supabase from '../lib/supabaseClient';
-import "./SearchItems.css";
+import "../styles/SearchItems.css";
 import AddItemModal from "../components/AddItemModal";
 import ItemInfoModal from "../components/ItemInfoModal";
-import BurgerMenu from "../components/BurgerMenu";
 import DummyImage from "../images/dummy-item.png";
 import ListedImage from "../images/added.png";
+import Navigation from '../components/Navigation';
 
 export default function SearchItems() {
+  const [user, setUser] = useState(null);
   const [items, setItems] = useState([]);
   const [filteredItems, setFilteredItems] = useState([]);
   const [searchName, setSearchName] = useState("");
@@ -22,6 +23,7 @@ export default function SearchItems() {
   const [modalItem, setModalItem] = useState(null);
   const [splashItemId, setSplashItemId] = useState(null);
   const navigate = useNavigate();
+  const location = useLocation();
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
   const [showAddItemModal, setShowAddItemModal] = useState(false);
@@ -36,9 +38,34 @@ export default function SearchItems() {
   });
 
   useEffect(() => {
-    fetchItems();
-    fetchUserLists();
-  }, [viewPublic]);
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      const userInfo = JSON.parse(storedUser);
+      setUser(userInfo);
+    } else {
+      navigate("/signup");
+    }
+  }, [navigate]);
+
+  useEffect(() => {
+    // Handle listName query parameter
+    const searchParams = new URLSearchParams(location.search);
+    const listNameParam = searchParams.get('listName');
+    if (listNameParam) {
+      // Find the list ID that matches the list name
+      const matchingList = userLists.find(list => list.name === listNameParam);
+      if (matchingList) {
+        setSelectedList(matchingList.id);
+      }
+    }
+  }, [location.search, userLists]);
+
+  useEffect(() => {
+    if (user) {
+      fetchItems();
+      fetchUserLists();
+    }
+  }, [viewPublic, user]);
 
   const fetchUserLists = async () => {
     const storedUser = localStorage.getItem("user");
@@ -128,44 +155,45 @@ export default function SearchItems() {
 
     // Step 1: Check if item already exists in list
     const { data: existing, error: selectError } = await supabase
-    .from("list_items")
-    .select("*")
-    .eq("list_id", selectedList)
-    .eq("item_name", item.name)
-    .single();
+      .from("list_items")
+      .select("*")
+      .eq("list_id", selectedList)
+      .eq("item_id", item.id)
+      .single();
 
     if (selectError && selectError.code !== "PGRST116") {
-    console.error("Error checking item:", selectError);
-    return;
+      console.error("Error checking item:", selectError);
+      return;
     }
 
     if (existing) {
-    // Step 2: Update quantity
-    const { error: updateError } = await supabase
-      .from("list_items")
-      .update({ quantity: existing.quantity + 1 })
-      .eq("id", existing.id);
+      // Step 2: Update quantity
+      const { error: updateError } = await supabase
+        .from("list_items")
+        .update({ quantity: existing.quantity + 1 })
+        .eq("id", existing.id);
     
-    if (updateError) {
-      console.error("Error updating quantity:", updateError);
-    }
+      if (updateError) {
+        console.error("Error updating quantity:", updateError);
+      }
     } else {
-    // Step 3: Insert new item with quantity = 1
-    const { error: insertError } = await supabase.from("list_items").insert({
-      list_id: selectedList,
-      item_name: item.name,
-      brand: item.brand || "N/A",
-      description: item.description || "",
-      specification: item.specification || "",
-      average_price: item.average_price,
-      srp: item.srp,
-      actual_price: null,
-      quantity: 1
-    });
+      // Step 3: Insert new item with quantity = 1
+      const { error: insertError } = await supabase.from("list_items").insert({
+        list_id: selectedList,
+        item_id: item.id,
+        item_name: item.name,
+        brand: item.brand || "N/A",
+        description: item.description || "",
+        specification: item.specification || "",
+        average_price: item.average_price,
+        srp: item.srp,
+        actual_price: null,
+        quantity: 1
+      });
 
-    if (insertError) {
-      console.error("Error inserting item:", insertError);
-    }
+      if (insertError) {
+        console.error("Error inserting item:", insertError);
+      }
     }
   };
   
@@ -183,168 +211,172 @@ export default function SearchItems() {
     if (currentPage > 1) setCurrentPage(currentPage - 1);
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem("user");
+    navigate("/signup");
+  };
+
+  if (!user) return <div className="loading-screen">Loading...</div>;
+
   return (
-    <div className="page-container" style={{ position: "relative" }}>
+    <div className="page-container-si">
       
-      {/* View item info Modal */}
-      {showModal && modalItem && (
-        <ItemInfoModal
-          item={modalItem}
-          onClose={() => setShowModal(false)}
-          currentUserId={JSON.parse(localStorage.getItem("user"))?.google_id}
-        />
-      )}
+      <div className="card-container-si">
 
+        <h1 className="page-title-si">Search Items 🔍</h1>
 
-      {/* AddItemModal goes here */}
-      <AddItemModal
-        newItem={newItem}
-        setNewItem={setNewItem}
-        showAddModal={showAddItemModal}
-        setShowAddModal={setShowAddItemModal}
-      />
-      
-      <div className="search-items-card-container">
-        {/* Options */}
-        <BurgerMenu currentPage="search-items" />
-
-        <h1 className="page-title">Search Items</h1>
-
-        {/* Filters and Sort */}
-        <div className="filters">
-          <input
-            type="text"
-            placeholder="Search by Item Name"
-            value={searchName}
-            onChange={(e) => setSearchName(e.target.value)}
-            className="filter-input"
+        {/* View item info Modal */}
+        {showModal && modalItem && (
+          <ItemInfoModal
+            item={modalItem}
+            onClose={() => setShowModal(false)}
+            currentUserId={JSON.parse(localStorage.getItem("user"))?.google_id}
           />
-          <input
-            type="text"
-            placeholder="Search by Brand"
-            value={searchBrand}
-            onChange={(e) => setSearchBrand(e.target.value)}
-            className="filter-input"
-          />
-          <input
-            type="text"
-            placeholder="Search by Description"
-            value={searchDesc}
-            onChange={(e) => setSearchDesc(e.target.value)}
-            className="filter-input"
-          />
-          <select
-            value={sortOption}
-            onChange={(e) => setSortOption(e.target.value)}
-            className="filter-select"
-          >
-            <option value="">Sort by</option>
-            <option value="price-low">Price: Low ➔ High</option>
-            <option value="price-high">Price: High ➔ Low</option>
-            <option value="srp-low">SRP: Low ➔ High</option>
-            <option value="srp-high">SRP: High ➔ Low</option>
-          </select>
-
-          <select
-            value={selectedList}
-            onChange={(e) => setSelectedList(e.target.value)}
-            className="filter-select"
-          >
-            <option value="">Select Shopping List 🧾</option>
-            {userLists.map(list => (
-              <option key={list.id} value={list.id}>{list.name} 🧾</option>
-            ))}
-          </select>
-        <div className="floating-btn-container">
-          <button
-            className="floating-go-btn"
-            onClick={() => navigate("/search-lists")}
-          >
-            <FaListUl className="btn-icon" />
-            Go to MyList
-            <span className="badge">!</span>
-          </button>
-        </div>
-      </div>
-
-        {/**Items viewing options */}
-        <div className="toggle-buttons">
-          <button
-            onClick={() => setViewPublic(false)}
-            className={`toggle-button ${!viewPublic ? "active" : ""}`}
-          >
-            My Items
-          </button>
-          <button
-            onClick={() => setViewPublic(true)}
-            className={`toggle-button ${viewPublic ? "active" : ""}`}
-          >
-            Public Items
-          </button>
-        </div>
-
-        {/* Items List */}
-        {filteredItems.length === 0 ? (
-          <div className="no-lists-container">
-            <p className="no-lists-text">No items found.</p>
-          </div>
-        ) : (
-          <ul className="item-grid">
-            {currentItems.map((item) => (
-              <li key={item.id} className="item-card">
-                <img src={DummyImage} alt="Item" className="item-image" onClick={() => handleOpenModal(item)} />
-                <div className="item-info" onClick={() => handleOpenModal(item)}>
-                  <div className="item-top">
-                    <div className="item-name-brand">
-                      {item.name} {item.brand && ` ${item.brand}`}
-                    </div>
-                    <div className="item-price">
-                      Ave Price: ₱{item.average_price != null ? item.average_price.toLocaleString() : "N/A"}
-                    </div>
-                  </div>
-                  <div className="item-bottom">
-                    <div className="item-spec">
-                      {item.description == null
-                        ? item.specification
-                        : (
-                            <>
-                              {item.description}
-                              <br />
-                              {item.specification}
-                            </>
-                          )
-                      }
-                    </div>
-                    <div className="item-srp">
-                      SRP: ₱{item.srp != null ? item.srp.toLocaleString() : "N/A"}
-                    </div>
-                  </div>
-                </div>
-                <button
-                  className="add-to-list-button"
-                  onClick={() => handleAddToList(item)}
-                >
-                  Add to List
-                </button>
-                {item.id === splashItemId && (
-                <img src={ListedImage} alt="Listed" className="listed-splash" />)}
-              </li>
-            ))}
-          </ul>
         )}
-        <div className="add-new-item-container">
-          <button className="add-new-item-btn" onClick={() => setShowAddItemModal(true)}>
-            + Add New Item
-          </button>
-        </div> 
-        <div className="pagination">
-          <button onClick={goToPrevPage} disabled={currentPage === 1}>
-            Previous
-          </button>
-          <span>Page {currentPage} of {totalPages}</span>
-          <button onClick={goToNextPage} disabled={currentPage === totalPages}>
-            Next
-          </button>
+
+        {/* AddItemModal goes here */}
+        <AddItemModal
+          newItem={newItem}
+          setNewItem={setNewItem}
+          showAddModal={showAddItemModal}
+          setShowAddModal={setShowAddItemModal}
+        />
+        
+        <div className="search-items-card-container">
+          {/* Filters and Sort */}
+          <div className="filters">
+            <input
+              type="text"
+              placeholder="Search by Item Name"
+              value={searchName}
+              onChange={(e) => setSearchName(e.target.value)}
+              className="filter-input"
+            />
+            <input
+              type="text"
+              placeholder="Search by Brand"
+              value={searchBrand}
+              onChange={(e) => setSearchBrand(e.target.value)}
+              className="filter-input"
+            />
+            <input
+              type="text"
+              placeholder="Search by Description"
+              value={searchDesc}
+              onChange={(e) => setSearchDesc(e.target.value)}
+              className="filter-input"
+            />
+            <select
+              value={sortOption}
+              onChange={(e) => setSortOption(e.target.value)}
+              className="filter-select"
+            >
+              <option value="">Sort by</option>
+              <option value="price-low">Price: Low ➔ High</option>
+              <option value="price-high">Price: High ➔ Low</option>
+              <option value="srp-low">SRP: Low ➔ High</option>
+              <option value="srp-high">SRP: High ➔ Low</option>
+            </select>
+
+            <select
+              value={selectedList}
+              onChange={(e) => setSelectedList(e.target.value)}
+              className="filter-select"
+            >
+              <option value="">Select Shopping List 🧾</option>
+              {userLists.map(list => (
+                <option key={list.id} value={list.id}>{list.name} 🧾</option>
+              ))}
+            </select>
+          </div>
+
+          {/**Items viewing options */}
+          <div className="toggle-buttons">
+            <button
+              onClick={() => setViewPublic(false)}
+              className={`toggle-button ${!viewPublic ? "active" : ""}`}
+            >
+              My Items
+            </button>
+            <button
+              onClick={() => setViewPublic(true)}
+              className={`toggle-button ${viewPublic ? "active" : ""}`}
+            >
+              Public Items
+            </button>
+          </div>
+
+          {/* Items List */}
+          {filteredItems.length === 0 ? (
+            <div className="no-lists-container">
+              <p className="no-lists-text">No items found.</p>
+            </div>
+          ) : (
+            <ul className="item-grid">
+              {currentItems.map((item) => (
+                <li key={item.id} className="item-card">
+                  <img 
+                    src={item.image_url || DummyImage} 
+                    alt={item.name} 
+                    className="item-image" 
+                    onClick={() => handleOpenModal(item)} 
+                  />
+                  <div className="item-info" onClick={() => handleOpenModal(item)}>
+                    <div className="item-top">
+                      <div className="item-name-brand">
+                        {item.name} {item.brand && ` ${item.brand}`}
+                      </div>
+                      <div className="item-price">
+                        Ave Price: ₱{item.average_price != null ? item.average_price.toLocaleString() : "N/A"}
+                      </div>
+                    </div>
+                    <div className="item-bottom">
+                      <div className="item-spec">
+                        {item.description == null
+                          ? item.specification
+                          : (
+                              <>
+                                {item.description}
+                                <br />
+                                {item.specification}
+                              </>
+                            )
+                        }
+                      </div>
+                      <div className="item-srp">
+                        SRP: ₱{item.srp != null ? item.srp.toLocaleString() : "N/A"}
+                      </div>
+                    </div>
+                  </div>
+                  <button
+                    className="add-to-list-button"
+                    onClick={() => handleAddToList(item)}
+                  >
+                    Add to List
+                  </button>
+                  {item.id === splashItemId && (
+                    <img src={ListedImage} alt="Listed" className="listed-splash" />
+                  )}
+                </li>
+              ))}
+            </ul>
+          )}
+
+          <div className="add-new-item-container">
+            <button className="add-new-item-btn" onClick={() => setShowAddItemModal(true)}>
+              + Add New Item
+            </button>
+          </div> 
+
+          <div className="pagination">
+            <button onClick={goToPrevPage} disabled={currentPage === 1}>
+              Previous
+            </button>
+            <span>Page {currentPage} of {totalPages}</span>
+            <button onClick={goToNextPage} disabled={currentPage === totalPages}>
+              Next
+            </button>
+          </div>
         </div>
       </div>
     </div>

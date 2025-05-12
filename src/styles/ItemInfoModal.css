@@ -31,6 +31,27 @@
   margin-bottom: 16px;
 }
 
+.modal-image-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 20px;
+  width: 200px;
+  height: 200px;
+  margin-left: auto;
+  margin-right: auto;
+  overflow: hidden;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+}
+
+.modal-item-image {
+  width: 200px;
+  height: 200px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
 .modal-text {
   margin-bottom: 10px;
 }
@@ -154,4 +175,56 @@
   resize: vertical;
   padding: 0.5rem;
   font-size: 0.95rem;
+}
+
+.item-privacy-controls {
+  display: flex;
+  gap: 10px;
+  margin: 10px 0;
+  padding: 0 20px;
+}
+
+.privacy-toggle {
+  padding: 6px 12px;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.privacy-toggle.public {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.privacy-toggle.private {
+  background-color: #f44336;
+  color: white;
+}
+
+.privacy-toggle:hover {
+  opacity: 0.9;
+}
+
+.share-link-button {
+  padding: 6px 12px;
+  border-radius: 4px;
+  border: none;
+  background-color: #2196F3;
+  color: white;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.share-link-button:hover {
+  background-color: #1976D2;
+}
+
+.creator-info {
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin: 0.5rem 0;
+  padding: 0 20px;
 }
