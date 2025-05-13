@@ -30,11 +30,12 @@ export default function Signup() {
       }
 
       const res = await axios.post(
-        "/api/auth/google",
+        "https://magingwais-production.up.railway.app/api/auth/google",
         { token: credentialResponse.credential },
         {
           headers: {
             "Content-Type": "application/json",
+            "Accept": "application/json"
           },
           withCredentials: true,
         }

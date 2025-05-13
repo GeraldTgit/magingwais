@@ -118,7 +118,7 @@ const ItemInfoModal = ({ item, onClose, currentUserId }) => {
     <div className="modal-overlay">
       <div className="modal-container">
         <h2 className="modal-title">
-          <strong>Edit Item: </strong>
+          <strong>Item: </strong>
           {isEditing ? (
             <input
               name="name"
