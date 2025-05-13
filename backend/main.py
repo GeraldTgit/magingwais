@@ -53,6 +53,10 @@ logger.info(f"Google Client ID configured: {GOOGLE_CLIENT_ID[:10]}...")
 logger.info(f"Supabase URL configured: {SUPABASE_URL}")
 logger.info(f"Supabase Key configured: {SUPABASE_KEY[:10]}...")
 
+# Debug prints
+print("SUPABASE_URL:", SUPABASE_URL)
+print("SUPABASE_KEY:", SUPABASE_KEY)
+
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 logger.info("Supabase client initialized")
 
