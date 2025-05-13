@@ -4,7 +4,6 @@ from pydantic import BaseModel
 import requests
 import os
 from supabase import create_client, Client
-from dotenv import load_dotenv
 import logging
 import sys
 
@@ -17,9 +16,6 @@ logging.basicConfig(
     ]
 )
 logger = logging.getLogger(__name__)
-
-# load env variables
-load_dotenv()
 
 # Initialize app
 app = FastAPI()
@@ -48,13 +44,12 @@ app.add_middleware(
 async def health_check():
     return {"status": "healthy"}
 
-# Google Config
-GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
-logger.info(f"Google Client ID configured: {GOOGLE_CLIENT_ID[:10]}...")
+# Environment variables (these will throw an error if missing)
+SUPABASE_URL = os.environ["SUPABASE_URL"]
+SUPABASE_KEY = os.environ["SUPABASE_KEY"]
+GOOGLE_CLIENT_ID = os.environ["GOOGLE_CLIENT_ID"]
 
-# Supabase Config
-SUPABASE_URL = os.getenv("SUPABASE_URL")
-SUPABASE_KEY = os.getenv("SUPABASE_KEY")
+logger.info(f"Google Client ID configured: {GOOGLE_CLIENT_ID[:10]}...")
 logger.info(f"Supabase URL configured: {SUPABASE_URL}")
 logger.info(f"Supabase Key configured: {SUPABASE_KEY[:10]}...")
 
