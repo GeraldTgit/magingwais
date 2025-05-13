@@ -17,15 +17,39 @@ export default function Dashboard() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    if (storedUser) {
-      const userInfo = JSON.parse(storedUser);
-      setUser(userInfo);
-      setNewNickname(userInfo.nickname || "");
-      fetchUserStats(userInfo.google_id);
-    } else {
-      navigate("/signup");
-    }
+    const fetchUserData = async () => {
+      const storedUser = localStorage.getItem("user");
+      if (storedUser) {
+        const userInfo = JSON.parse(storedUser);
+        try {
+          // Fetch latest user data from Supabase
+          const { data, error } = await supabase
+            .from('users')
+            .select('*')
+            .eq('google_id', userInfo.google_id)
+            .single();
+
+          if (error) throw error;
+
+          // Update user data with latest from Supabase
+          const updatedUser = { ...userInfo, ...data };
+          setUser(updatedUser);
+          setNewNickname(data.nickname || "");
+          localStorage.setItem("user", JSON.stringify(updatedUser));
+          fetchUserStats(userInfo.google_id);
+        } catch (error) {
+          console.error("Error fetching user data:", error);
+          // Fallback to stored data if fetch fails
+          setUser(userInfo);
+          setNewNickname(userInfo.nickname || "");
+          fetchUserStats(userInfo.google_id);
+        }
+      } else {
+        navigate("/signup");
+      }
+    };
+
+    fetchUserData();
   }, [navigate]);
 
   const fetchUserStats = async (userId) => {
@@ -94,7 +118,6 @@ export default function Dashboard() {
   return (
     <div className="page-container-db">
       <div className="dashboard-container">
-        <h1 className="page-title">Dashboard</h1>
         <div className="profile-section">
           <img
             src={user.picture_url}
@@ -136,13 +159,19 @@ export default function Dashboard() {
             ) : (
               <div className="nickname-display">
                 <p className="profile-nickname">
-                  {user.nickname || "No nickname set"}
+                  {user.nickname ? (
+                    <>
+                      <span className="nickname-label">Nickname:</span> {user.nickname}
+                    </>
+                  ) : (
+                    "No nickname set"
+                  )}
                 </p>
                 <button 
                   className="edit-nickname-button"
                   onClick={() => setIsEditingNickname(true)}
                 >
-                  Edit
+                  {user.nickname ? "Change" : "Add"} Nickname
                 </button>
               </div>
             )}

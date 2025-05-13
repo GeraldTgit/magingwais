@@ -312,7 +312,6 @@ const ListItems = () => {
   if (loading) {
     return (
       <div className="page-container">
-        <Navigation />
         <div className="loading-state">Loading items...</div>
       </div>
     );

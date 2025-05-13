@@ -22,6 +22,7 @@ function AppContent() {
 
   return (
     <div>
+      {!isSignupPage && <Navigation />}
       <Routes>
         <Route path="/" element={<Signup />} />
         <Route path="/signup" element={<Signup />} />
@@ -40,7 +41,6 @@ export default function App() {
   return (
     <Router>
       <AuthProvider>
-        <Navigation />
         <AppContent />
       </AuthProvider>
     </Router>

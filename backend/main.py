@@ -28,6 +28,7 @@ app = FastAPI()
 origins = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
+    "https://magingwais.vercel.app",  # Add your Vercel domain
 ]
 
 logger.info(f"Configuring CORS with origins: {origins}")
@@ -41,6 +42,11 @@ app.add_middleware(
     expose_headers=["*"],
     max_age=3600,
 )
+
+# Health check endpoint
+@app.get("/health")
+async def health_check():
+    return {"status": "healthy"}
 
 # Google Config
 GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
