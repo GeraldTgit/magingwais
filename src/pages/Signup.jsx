@@ -30,7 +30,7 @@ export default function Signup() {
       }
 
       const res = await axios.post(
-        "/api/auth/google/",
+        "/api/auth/google",
         { token: credentialResponse.credential },
         {
           headers: {

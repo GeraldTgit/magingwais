@@ -31,7 +31,7 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
     allow_credentials=True,
-    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allow_methods=["*"],
     allow_headers=["*"],
     expose_headers=["*"],
     max_age=3600,
@@ -53,7 +53,7 @@ supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 class TokenData(BaseModel):
     token: str
 
-@app.post("/api/auth/google/")
+@app.post("/api/auth/google")
 async def google_auth(token_data: TokenData):
     token = token_data.token
 
