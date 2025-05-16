@@ -108,7 +108,7 @@ export default function SearchLists() {
   if (!user) return <div className="loading-screen">Loading...</div>;
 
   return (
-    <div className="page-container-sl">
+    <>
       {/**Confirm delete a List Modal */}
       {showModal && (
         <div className="modal-overlay-sl">
@@ -164,35 +164,38 @@ export default function SearchLists() {
                 key={list.id}
                 className="list-item"
               >            
-                <div className="list-item-header">
-                  <span>{list.name || "(Unnamed List)"}</span>
-                  {!viewPublic && (
-                    <div className="icon-buttons">
-                      <FaEdit 
-                        className="edit-icon"
-                        onClick={() => navigate(`/list/${list.id}`)}
-                      />
-                      <FaTrash
-                        className="delete-icon"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          openDeleteModal(list.id);
-                        }}
-                      />
-                    </div>
-                  )}
-                </div>
-                <div className="list-item-info">
-                  {list.is_public && (
-                    <span className="public-badge">Public</span>
-                  )}
-                  {viewPublic && list.creator && (
-                    <span className="creator-badge">
-                      By: {list.creator.nickname || "no nickname yet"}
-                    </span>
-                  )}
+                <div className="list-item-content">
+                  <div className="list-item-header">
+                    <span>{list.name || "(Unnamed List)"}</span>
+                    {!viewPublic && (
+                      <div className="icon-buttons">
+                        <FaEdit 
+                          className="edit-icon"
+                          onClick={() => navigate(`/list/${list.id}`)}
+                        />
+                        
+                      </div>
+                    )}
+                  </div>
+                  <div className="list-item-info">
+                    {list.is_public && (
+                      <span className="public-badge">Public</span>
+                    )}
+                    {viewPublic && list.creator && (
+                      <span className="creator-badge">
+                        By: {list.creator.nickname || "no nickname yet"}
+                      </span>
+                    )}
+                  </div>
                 </div>
                 <div className="list-item-actions">
+                <FaTrash
+                          className="delete-icon"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            openDeleteModal(list.id);
+                          }}
+                        />
                   <button
                     className="view-items-btn"
                     onClick={() => handleViewItems(list.id)}
@@ -217,6 +220,6 @@ export default function SearchLists() {
           </div>
         )}
       </div>
-    </div>
+    </>
   );
 }

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "../supabaseClient";
 import "../styles/ListItems.css";
-import { FaHome, FaList, FaUser, FaSignOutAlt, FaEdit, FaTrash } from "react-icons/fa";
+import { FaHome, FaList, FaUser, FaSignOutAlt, FaEdit, FaTrash ,FaCopy, FaShareAlt} from "react-icons/fa";
 import ListItemInfoModal from '../components/ListItemInfoModal';
 import Navigation from '../components/Navigation';
 
@@ -309,6 +309,56 @@ const ListItems = () => {
       });
   };
 
+  const handleDuplicateList = async () => {
+    if (!listId || !userId) return;
+
+    try {
+      // 1. Fetch current list details
+      const { data: originalList, error: listError } = await supabase
+        .from("shopping_lists")
+        .select("*")
+        .eq("id", listId)
+        .single();
+
+      if (listError) throw listError;
+
+      // 2. Create a new list with copied name
+      const newName = `${originalList.name} (Copy)`;
+      const { data: newList, error: insertError } = await supabase
+        .from("shopping_lists")
+        .insert([{ name: newName, user_id: userId, is_public: false }])
+        .select()
+        .single();
+
+      if (insertError) throw insertError;
+
+      // 3. Copy all list items
+      const itemsToCopy = items.map(({ item_name, description, specification, quantity, srp, actual_price, isbought }) => ({
+        item_name,
+        description,
+        specification,
+        quantity,
+        srp,
+        actual_price,
+        isbought,
+        list_id: newList.id,
+      }));
+
+      const { error: copyError } = await supabase
+        .from("list_items")
+        .insert(itemsToCopy);
+
+      if (copyError) throw copyError;
+
+      alert("List duplicated successfully!");
+      navigate(`/list/${newList.id}`);
+    } catch (err) {
+      console.error("Failed to duplicate list:", err);
+      alert("An error occurred while duplicating the list.");
+    }
+  };
+
+
   if (loading) {
     return (
       <div className="page-container">
@@ -330,12 +380,14 @@ const ListItems = () => {
             Back to Lists
           </button>
         </div>
+            
       </div>
     );
   }
+  
 
   return (
-    <div className="page-container">
+    <div className="card-container">
       <div className="list-items-container">
         <div className="page-header-li">
           <div className="title-section">
@@ -390,7 +442,7 @@ const ListItems = () => {
                     className="share-link-button"
                     onClick={handleCopyShareLink}
                   >
-                    Share Link
+                    <FaShareAlt /> Share Link
                   </button>
                 )}
               </div>
@@ -464,6 +516,8 @@ const ListItems = () => {
                         +
                       </button>
                     </div>
+                  </div>
+                  <div className="second-part">
                     <div className="price-input">
                       <div className={`price-label ${item.actual_price === null ? 'active' : ''}`}>
                         SRP: ₱{item.srp?.toLocaleString() || "0"}
@@ -485,7 +539,7 @@ const ListItems = () => {
                       />
                     </div>
                     <div className="subtotal">
-                      <span className="amount">₱{subtotal.toLocaleString()}</span>
+                      <span className="amount">Subtotal: ₱{subtotal.toLocaleString()}</span>
                       {isOwner && (
                         <div className="item-actions">
                           <button
@@ -509,7 +563,7 @@ const ListItems = () => {
                         </div>
                       )}
                     </div>
-                  </div>
+                    </div>
                 </div>
               );
             })
@@ -518,6 +572,13 @@ const ListItems = () => {
 
         <div className="list-footer">
           <div className="total-section">
+            <span className="duplicate-btn">
+              {isOwner && (
+               <button className="share-link-button" onClick={handleDuplicateList}>
+                <FaCopy /> Duplicate List
+               </button>  
+             )}  
+            </span>
             <span className="total-label">Total:</span>
             <span className="total-amount">₱{totalPrice.toLocaleString()}</span>
           </div>

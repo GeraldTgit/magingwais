@@ -1,15 +1,13 @@
-.dashboard-page {
+.dashboard-container {
   min-height: 100vh;
   background-color: #f3f4f6;
-  padding: 2rem;
-}
-
-.dashboard-container {
+  padding: 0.5rem;
+  padding-top: 3rem;
   margin: 0 auto;
   background: white;
-  border-radius: 1rem;
+  border-radius: 0.75rem;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  padding: 2rem;
+  max-width: 800px;
 }
 
 .page-title {
@@ -243,14 +241,6 @@
 }
 
 @media (max-width: 768px) {
-  .dashboard-page {
-    padding: 1rem;
-  }
-
-  .dashboard-container {
-    padding: 1.5rem;
-  }
-
   .stats-section {
     grid-template-columns: 1fr;
   }
@@ -260,11 +250,4 @@
   }
 }
 
-.page-container-db {
-  min-height: 100vh;
-  background-color: #f3f4f6;
-  padding: 1rem;
-  padding-top: 4rem;
-}
-
-/* Removing navigation styles as they are now in Navigation.css */ 
+/* Removing page-container-db and navigation styles */ 

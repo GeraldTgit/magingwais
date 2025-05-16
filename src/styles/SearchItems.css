@@ -272,16 +272,13 @@
   border-color: #1d4ed8;
 }
 
-.page-container-si {
+.card-container-si {
   min-height: 100vh;
   background-color: #f3f4f6;
-  padding: 1rem;
-  padding-top: 4rem;
-}
-
-.card-container-si {
+  padding: 0.5rem;
+  padding-top: 3rem;
   width: 100%;
-  max-width: 60rem;
+  max-width: 800px;
   position: sticky;
   margin: 0 auto;
   background-color: white;

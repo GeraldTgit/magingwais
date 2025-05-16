@@ -137,24 +137,6 @@ const ItemInfoModal = ({ item, onClose, currentUserId }) => {
           </div>
         )}
 
-        {isOwnedByUser && (
-          <div className="item-privacy-controls">
-            <button
-              className={`privacy-toggle ${isEditing ? editedItem.is_public : item.is_public ? 'public' : 'private'}`}
-              onClick={handleTogglePrivacy}
-            >
-              {isEditing ? (editedItem.is_public ? 'Public' : 'Private') : (item.is_public ? 'Public' : 'Private')}
-            </button>
-            {(isEditing ? editedItem.is_public : item.is_public) && (
-              <button
-                className="share-link-button"
-                onClick={handleCopyShareLink}
-              >
-                Share Link
-              </button>
-            )}
-          </div>
-        )}
 
         <div className="modal-body">
           <div className="modal-image-container">
@@ -244,6 +226,27 @@ const ItemInfoModal = ({ item, onClose, currentUserId }) => {
         </div>
 
         <div className="modal-actions">
+          <div className="ipc">
+            {isOwnedByUser && (
+            <div className="item-privacy-controls">
+              <button
+                className={`privacy-toggle ${isEditing ? editedItem.is_public : item.is_public ? 'public' : 'private'}`}
+                onClick={handleTogglePrivacy}
+              >
+                {isEditing ? (editedItem.is_public ? 'Public' : 'Private') : (item.is_public ? 'Public' : 'Private')}
+              </button>
+              {(isEditing ? editedItem.is_public : item.is_public) && (
+                <button
+                  className="share-link-button"
+                  onClick={handleCopyShareLink}
+                >
+                  Share Link
+                </button>
+              )}
+            </div>
+            )}
+        </div>
+
           {isOwnedByUser &&
             (isEditing ? (
               <>
