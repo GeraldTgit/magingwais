@@ -521,27 +521,27 @@ const ListItems = () => {
                     <div className="price-input">
                       <div className={`price-label ${item.actual_price === null ? 'active' : ''}`}>
                         SRP: ₱{item.srp?.toLocaleString() || "0"}
-                      </div>
-                      <input
-                        type="text"
-                        inputMode="decimal"
-                        placeholder="Enter actual price"
-                        value={item.actual_price ?? ""}
-                        onChange={(e) => {
-                          e.stopPropagation();
-                          if (!isOwner) return;
-                          const raw = e.target.value.replace(/[^\d.]/g, "");
-                          const value = raw === "" ? null : parseFloat(raw);
-                          handleUpdateActualPrice(item.id, value);
-                        }}
-                        onClick={(e) => e.stopPropagation()}
-                        disabled={!isOwner}
-                      />
-                    </div>
-                    <div className="subtotal">
+                      </div>                      
+                        <input
+                          type="text"
+                          inputMode="decimal"
+                          placeholder="Enter actual price"
+                          value={item.actual_price ?? ""}
+                          onChange={(e) => {
+                            e.stopPropagation();
+                            if (!isOwner) return;
+                            const raw = e.target.value.replace(/[^\d.]/g, "");
+                            const value = raw === "" ? null : parseFloat(raw);
+                            handleUpdateActualPrice(item.id, value);
+                          }}
+                          onClick={(e) => e.stopPropagation()}
+                          disabled={!isOwner}
+                        />
+                  </div>
+                    <div className="subtotal-li">
                       <span className="amount">Subtotal: ₱{subtotal.toLocaleString()}</span>
                       {isOwner && (
-                        <div className="item-actions">
+                        <div class="item-actions-li">
                           <button
                             className="edit-button"
                             onClick={(e) => {
@@ -574,7 +574,7 @@ const ListItems = () => {
           <div className="total-section">
             <span className="duplicate-btn">
               {isOwner && (
-               <button className="share-link-button" onClick={handleDuplicateList}>
+               <button className="duplicate-list-button" onClick={handleDuplicateList}>
                 <FaCopy /> Duplicate List
                </button>  
              )}  

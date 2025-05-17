@@ -13,6 +13,7 @@ import SearchLists from "./pages/SearchLists";
 import SearchItems from "./pages/SearchItems";
 import CreateList from "./pages/CreateList";
 import ListItems from "./pages/ListItems";
+import ItemInfoPage from './pages/ItemInfoPage';
 import './styles/App.css';
 
 function AppContent() {
@@ -32,9 +33,10 @@ function AppContent() {
         <Route path="/search-items" element={<SearchItems />} />
         <Route path="/create-list" element={<CreateList />} />
         <Route path="/list/:listId" element={<ListItems />} />
+        <Route path="/item/:id" element={<ItemInfoPage />} />
       </Routes>
     </div>
-  );
+  )
 }
 
 export default function App() {

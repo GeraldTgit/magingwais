@@ -128,7 +128,7 @@ export default function SearchLists() {
       <div className="card-container-sl">
         <h1 className="page-title-sl">Shopping Lists 🧾</h1>
 
-        <div className="search-container">
+        <div className="search-container-sl">
           <input
             type="text"
             placeholder="Search lists..."

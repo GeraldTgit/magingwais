@@ -63,7 +63,7 @@
   background: #f9fafb;
 }
 
-.item-image {
+.item-image-si {
   width: 90px;
   height: 90px;
   object-fit: cover;
@@ -90,6 +90,7 @@
 .item-name-brand {
   font-size: 1rem;
   font-weight: 700;
+  max-width: 150px;
 }
 
 .item-price {
@@ -145,10 +146,12 @@
   border-radius: 0.5rem;
   cursor: pointer;
   transition: background-color 0.3s;
+  max-width: 120px;
+  min-height: 60px;
 }
 
 .add-to-list-button:hover {
-  background: #059669;
+  background: #5b6c66;
 }
 
 .modal-close {
@@ -184,10 +187,6 @@
   }
 }
 
-.item-card {
-  position: relative;
-}
-
 .pagination {
   display: flex;
   justify-content: center;
@@ -205,6 +204,7 @@
   border: none;
   cursor: pointer;
   font-weight: 600;
+  width: auto;
 }
 
 .pagination button:disabled {
@@ -249,7 +249,7 @@
   background: white;
   color: #4b5563;
   font-size: 0.8rem;
-  font-weight: 500; 
+  font-weight: 500;
   cursor: pointer;
   border-radius: 0.5rem;
   transition: all 0.2s;

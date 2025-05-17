@@ -4,10 +4,8 @@ import { FaListUl, FaHome, FaList, FaUser, FaSignOutAlt, FaEdit, FaTrash } from 
 import supabase from '../lib/supabaseClient';
 import "../styles/SearchItems.css";
 import AddItemModal from "../components/AddItemModal";
-import ItemInfoModal from "../components/ItemInfoModal";
 import DummyImage from "../images/dummy-item.png";
 import ListedImage from "../images/added.png";
-import Navigation from '../components/Navigation';
 
 export default function SearchItems() {
   const [user, setUser] = useState(null);
@@ -19,8 +17,6 @@ export default function SearchItems() {
   const [sortOption, setSortOption] = useState("");
   const [userLists, setUserLists] = useState([]);
   const [selectedList, setSelectedList] = useState("");
-  const [showModal, setShowModal] = useState(false);
-  const [modalItem, setModalItem] = useState(null);
   const [splashItemId, setSplashItemId] = useState(null);
   const navigate = useNavigate();
   const location = useLocation();
@@ -139,9 +135,9 @@ export default function SearchItems() {
     setFilteredItems(temp);
   }, [searchName, searchBrand, searchDesc, sortOption, items]);
 
-  const handleOpenModal = (item) => {
-    setModalItem(item);
-    setShowModal(true);
+
+  const handleItemClick = (itemId) => {
+  navigate(`/item/${itemId}`);
   };
 
   const handleAddToList = async (item) => {
@@ -211,11 +207,6 @@ export default function SearchItems() {
     if (currentPage > 1) setCurrentPage(currentPage - 1);
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem("user");
-    navigate("/signup");
-  };
-
   if (!user) return <div className="loading-screen">Loading...</div>;
 
   return (
@@ -224,15 +215,6 @@ export default function SearchItems() {
       <div className="card-container-si">
 
         <h1 className="page-title-si">Search Items 🔍</h1>
-
-        {/* View item info Modal */}
-        {showModal && modalItem && (
-          <ItemInfoModal
-            item={modalItem}
-            onClose={() => setShowModal(false)}
-            currentUserId={JSON.parse(localStorage.getItem("user"))?.google_id}
-          />
-        )}
 
         {/* AddItemModal goes here */}
         <AddItemModal
@@ -318,10 +300,10 @@ export default function SearchItems() {
                   <img 
                     src={item.image_url || DummyImage} 
                     alt={item.name} 
-                    className="item-image" 
-                    onClick={() => handleOpenModal(item)} 
+                    className="item-image-si" 
+                    onClick={() => handleItemClick(item.id)} 
                   />
-                  <div className="item-info" onClick={() => handleOpenModal(item)}>
+                  <div className="item-info" onClick={() => handleItemClick(item.id)}>
                     <div className="item-top">
                       <div className="item-name-brand">
                         {item.name} {item.brand && ` ${item.brand}`}

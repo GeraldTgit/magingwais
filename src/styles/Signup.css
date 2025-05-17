@@ -1,34 +1,50 @@
-/* Full white page background */
+/* Reset & Base Styles */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f9fafb;
+  color: #111827;
+  line-height: 1.6;
+}
+
+/* Page Container */
 .page-container {
-  background-color: white;
   min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
+  padding: 1rem;
+  background-color: #ffffff;
 }
 
-/* Center card */
+/* Signup Card */
 .signup-card-container {
   width: 100%;
-  max-width: 400px;
+  max-width: 420px;
   background: white;
-  border-radius: 0.75rem;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
-  padding: 1.5rem;
+  border-radius: 1rem;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
+  padding: 2rem;
+  margin-bottom: auto;
 }
 
-/* Logo animation */
+/* Logo */
 .logo-container {
   display: flex;
   justify-content: center;
-  margin-bottom: 0.75rem;
+  margin-bottom: 1rem;
 }
 
 .company-logo {
-  max-height: 60px;
+  max-height: 64px;
+  animation: fadeInUp 0.8s ease-out forwards;
   opacity: 0;
   transform: translateY(-10px);
-  animation: fadeInUp 0.8s ease-out forwards;
 }
 
 @keyframes fadeInUp {
@@ -38,119 +54,80 @@
   }
 }
 
-/* Signup text and button */
+/* Heading & Description */
 .signup-wrapper h1 {
+  font-size: 1.75rem;
   text-align: center;
-  font-size: 1.5rem;
-  margin-bottom: 1.25rem;
   font-weight: bold;
-  color: #111827;
+  margin-bottom: 0.75rem;
 }
 
 .signup-wrapper p {
-  margin-top: 1.25rem;
   text-align: center;
-  font-size: 0.85rem;
+  font-size: 0.95rem;
   color: #6b7280;
+  margin-bottom: 1.5rem;
 }
 
+/* Form Fields */
+input[type="text"],
+input[type="email"],
+input[type="password"] {
+  width: 100%;
+  padding: 0.75rem;
+  margin-bottom: 1rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  transition: border-color 0.2s;
+}
+
+input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 1px #3b82f6;
+}
+
+/* Error Message */
 .p-em {
-  color: red;
-  font-size: 0.8rem;
+  color: #dc2626;
+  font-size: 0.875rem;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+/* Buttons */
+button,
+.google-signin-button {
+  width: 100%;
+  background-color: #3b82f6;
+  color: white;
+  font-weight: 600;
+  padding: 0.75rem;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.2s;
   margin-top: 0.5rem;
 }
 
-/* Google Sign-In Button */
-.google-signin-button {
-  width: 100%;
-  max-width: 300px;
-  margin: 0 auto;
-  display: block;
-}
-
-/* Responsive adjustments */
-@media (max-width: 640px) {
-  .signup-card-container {
-    max-width: 320px;
-    padding: 1.25rem;
-  }
-
-  .company-logo {
-    max-height: 50px;
-  }
-
-  .signup-wrapper h1 {
-    font-size: 1.25rem;
-    margin-bottom: 1rem;
-  }
-}
-
-.add-new-item-container {
-  display: flex;
-  justify-content: center;
-  margin: 2rem 0;
-}
-
-.add-new-item-btn {
-  background-color: #3b82f6;
-  color: white;
-  font-weight: bold;
-  padding: 0.75rem 1.5rem;
-  border-radius: 0.75rem;
-  border: none;
-  cursor: pointer;
-  font-size: 1rem;
-}
-
-.add-new-item-btn:hover {
+button:hover,
+.google-signin-button:hover {
   background-color: #2563eb;
 }
 
-.modal-container input {
-  width: 100%;
-  padding: 0.5rem;
-  border-radius: 0.5rem;
-  border: 1px solid #ccc;
-}
+/* Responsive Adjustments */
+@media (max-width: 480px) {
+  .signup-card-container {
+    padding: 1.25rem;
+  }
 
-.modal-buttons {
-  display: flex;
-  justify-content: flex-end;
-  gap: 1rem;
-  margin-top: 1rem;
-}
+  .signup-wrapper h1 {
+    font-size: 1.5rem;
+  }
 
-.modal-buttons button {
-  padding: 0.5rem 1rem;
-  font-weight: 600;
-  border: none;
-  border-radius: 0.5rem;
-  cursor: pointer;
-}
-
-.modal-buttons button:first-child {
-  background-color: #10b981;
-  color: white;
-}
-
-.modal-buttons button:last-child {
-  background-color: #ef4444;
-  color: white;
-}
-
-.modal-title {
-  font-size: 1.5rem;
-  font-weight: bold;
-  margin-bottom: 1rem;
-  text-align: center;
-}
-
-.public-checkbox {
-  font-size: 0.95rem;
-  margin-top: 0.5rem;
-  display: flex;
-  align-items: center;
-  gap: 0rem;
-  font-weight: bold;
-  color: #111827;
+  .company-logo {
+    max-height: 52px;
+  }
 }

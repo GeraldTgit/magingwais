@@ -10,7 +10,8 @@
   margin: 0 auto;
   background: white;
   border-radius: 0.75rem;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
   position: relative;
 }
 
@@ -22,8 +23,7 @@
   text-align: center;
 }
 
-.search-container {
-  margin-bottom: 1.5rem;
+.search-container-sl {
   max-width: 90%;
 }
 
@@ -45,7 +45,7 @@
 .view-toggle {
   display: flex;
   gap: 1rem;
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
   justify-content: center;
 }
 
@@ -75,7 +75,7 @@
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   margin-bottom: 2rem;
-  padding-inline-start: .5rem;
+  padding-inline-start: 0.5rem;
 }
 
 .list-item {
