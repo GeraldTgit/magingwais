@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "../supabaseClient";
 import "../styles/ListItems.css";
-import { FaHome, FaList, FaUser, FaSignOutAlt, FaEdit, FaTrash ,FaCopy, FaShareAlt} from "react-icons/fa";
+import { FaHome, FaList, FaUser, FaSignOutAlt, FaEdit, FaTrash, FaCopy, FaShareAlt } from "react-icons/fa";
 import ListItemInfoModal from '../components/ListItemInfoModal';
 import Navigation from '../components/Navigation';
 
@@ -21,8 +21,8 @@ const ListItems = () => {
   const [listOwnerId, setListOwnerId] = useState(null);
   const [selectedItem, setSelectedItem] = useState(null);
   const [isPublic, setIsPublic] = useState(false);
-  const [showShareLink, setShowShareLink] = useState(false);
   const [creatorInfo, setCreatorInfo] = useState(null);
+  const [budget, setBudget] = useState(0);
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
@@ -84,256 +84,98 @@ const ListItems = () => {
   const fetchListItems = async () => {
     try {
       setLoading(true);
-      setError(null);
-
-      // First verify the list exists
-      const { data: listData, error: listError } = await supabase
-        .from("shopping_lists")
-        .select("id")
-        .eq("id", listId)
-        .single();
-
-      if (listError) {
-        console.error("Error verifying list:", listError);
-        throw new Error("List not found");
-      }
-
-      if (!listData) {
-        throw new Error("List not found");
-      }
-
-      // Then fetch the items
       const { data, error } = await supabase
         .from("list_items")
-        .select(`
-          id,
-          item_name,
-          description,
-          specification,
-          quantity,
-          srp,
-          actual_price,
-          isbought
-        `)
+        .select("*")
         .eq("list_id", listId)
-        .order('created_at', { ascending: true });
+        .order("created_at", { ascending: true });
 
-      if (error) {
-        console.error("Error fetching list items:", error);
-        throw new Error(error.message || "Failed to load items");
-      }
+      if (error) throw error;
 
       setItems(data || []);
       setFilteredItems(data || []);
     } catch (err) {
-      console.error("Error in fetchListItems:", err);
-      setError(err.message || "Failed to load items. Please try again.");
+      setError("Failed to load items.");
     } finally {
       setLoading(false);
     }
   };
 
-  const handleQuantityChange = async (itemId, newQuantity) => {
-    if (newQuantity < 1 || userId !== listOwnerId) return;
-
-    try {
-      const { error } = await supabase
-        .from("list_items")
-        .update({ quantity: newQuantity })
-        .eq("id", itemId);
-
-      if (error) {
-        console.error("Error updating quantity:", error);
-        throw new Error(error.message);
-      }
-
-      setItems(prevItems =>
-        prevItems.map(item =>
-          item.id === itemId ? { ...item, quantity: newQuantity } : item
-        )
-      );
-    } catch (err) {
-      console.error("Error updating quantity:", err);
-      alert(err.message || "Failed to update quantity. Please try again.");
-    }
-  };
-
-  const handleDeleteItem = async (itemId) => {
-    if (!window.confirm("Are you sure you want to remove this item from the list?")) {
-      return;
-    }
-
-    try {
-      const { error } = await supabase
-        .from("list_items")
-        .delete()
-        .eq("id", itemId);
-
-      if (error) {
-        console.error("Error deleting item:", error);
-        throw new Error(error.message);
-      }
-
-      setItems(prevItems => prevItems.filter(item => item.id !== itemId));
-    } catch (err) {
-      console.error("Error deleting item:", err);
-      alert(err.message || "Failed to delete item. Please try again.");
-    }
-  };
-
   const handleToggleBought = async (itemId, currentStatus) => {
     if (userId !== listOwnerId) return;
-
     try {
-      const { error } = await supabase
+      await supabase
         .from("list_items")
         .update({ isbought: !currentStatus })
         .eq("id", itemId);
 
-      if (error) {
-        console.error("Error updating item status:", error);
-        throw new Error(error.message);
-      }
-
-      setItems(prevItems =>
-        prevItems.map(item =>
-          item.id === itemId ? { ...item, isbought: !currentStatus } : item
-        )
-      );
+      setItems(items => items.map(i => i.id === itemId ? { ...i, isbought: !currentStatus } : i));
     } catch (err) {
-      console.error("Error updating item status:", err);
-      alert(err.message || "Failed to update item status. Please try again.");
+      alert("Error toggling bought status");
     }
   };
 
   const handleUpdateActualPrice = async (itemId, newPrice) => {
     if (userId !== listOwnerId) return;
-
     try {
-      const { error } = await supabase
+      await supabase
         .from("list_items")
         .update({ actual_price: newPrice })
         .eq("id", itemId);
-
-      if (error) {
-        console.error("Error updating price:", error);
-        throw new Error(error.message);
-      }
-
-      setItems(prevItems =>
-        prevItems.map(item =>
-          item.id === itemId ? { ...item, actual_price: newPrice } : item
-        )
-      );
+      setItems(items => items.map(i => i.id === itemId ? { ...i, actual_price: newPrice } : i));
     } catch (err) {
-      console.error("Error updating price:", err);
-      alert(err.message || "Failed to update price. Please try again.");
+      alert("Failed to update price");
     }
   };
 
-  const handleItemUpdated = (updatedItem) => {
-    setItems(prevItems =>
-      prevItems.map(item =>
-        item.id === updatedItem.id ? updatedItem : item
-      )
-    );
-  };
-
-  const handleItemDeleted = (deletedItemId) => {
-    setItems(prevItems =>
-      prevItems.filter(item => item.id !== deletedItemId)
-    );
-  };
-
-  const totalPrice = items.reduce((sum, item) => {
-    const unitPrice = item.actual_price != null ? item.actual_price : item.srp || 0;
-    return sum + unitPrice * (item.quantity || 1);
-  }, 0);
-
-  const isOwner = userId === listOwnerId;
-
-  const handleLogout = () => {
-    localStorage.removeItem("user");
-    navigate("/signup");
-  };
-
-  const handleNameEdit = async () => {
-    if (!editedName.trim() || editedName === listName) {
-      setIsEditingName(false);
-      return;
-    }
-
+  const handleQuantityChange = async (itemId, quantity) => {
+    if (userId !== listOwnerId || quantity < 1) return;
     try {
-      const { error } = await supabase
-        .from("shopping_lists")
-        .update({ name: editedName.trim() })
-        .eq("id", listId);
+      await supabase
+        .from("list_items")
+        .update({ quantity })
+        .eq("id", itemId);
+      setItems(items => items.map(i => i.id === itemId ? { ...i, quantity } : i));
+    } catch {
+      alert("Failed to update quantity");
+    }
+  };
 
-      if (error) throw error;
-
-      setListName(editedName.trim());
-      setIsEditingName(false);
-    } catch (err) {
-      console.error("Error updating list name:", err);
-      alert("Failed to update list name. Please try again.");
+  const handleDeleteItem = async (itemId) => {
+    if (!window.confirm("Delete item?")) return;
+    try {
+      await supabase.from("list_items").delete().eq("id", itemId);
+      setItems(items => items.filter(i => i.id !== itemId));
+    } catch {
+      alert("Error deleting item");
     }
   };
 
   const handleTogglePrivacy = async () => {
-    if (!isOwner) return;
-
+    if (userId !== listOwnerId) return;
     try {
-      const { error } = await supabase
-        .from("shopping_lists")
-        .update({ is_public: !isPublic })
-        .eq("id", listId);
-
-      if (error) throw error;
-
+      await supabase.from("shopping_lists").update({ is_public: !isPublic }).eq("id", listId);
       setIsPublic(!isPublic);
-    } catch (err) {
-      console.error("Error updating list privacy:", err);
-      alert("Failed to update list privacy. Please try again.");
+    } catch {
+      alert("Failed to toggle privacy");
     }
   };
 
-  const handleCopyShareLink = () => {
-    const shareLink = `${window.location.origin}/list/${listId}`;
-    navigator.clipboard.writeText(shareLink)
-      .then(() => {
-        alert("Share link copied to clipboard!");
-      })
-      .catch(err => {
-        console.error("Failed to copy link:", err);
-        alert("Failed to copy link. Please try again.");
-      });
-  };
-
   const handleDuplicateList = async () => {
-    if (!listId || !userId) return;
-
     try {
-      // 1. Fetch current list details
-      const { data: originalList, error: listError } = await supabase
+      const { data: originalList } = await supabase
         .from("shopping_lists")
         .select("*")
         .eq("id", listId)
         .single();
 
-      if (listError) throw listError;
-
-      // 2. Create a new list with copied name
-      const newName = `${originalList.name} (Copy)`;
-      const { data: newList, error: insertError } = await supabase
+      const { data: newList } = await supabase
         .from("shopping_lists")
-        .insert([{ name: newName, user_id: userId, is_public: false }])
+        .insert([{ name: `${originalList.name} (Copy)`, user_id: userId, is_public: false }])
         .select()
         .single();
 
-      if (insertError) throw insertError;
-
-      // 3. Copy all list items
-      const itemsToCopy = items.map(({ item_name, description, specification, quantity, srp, actual_price, isbought }) => ({
+      const copiedItems = items.map(({ item_name, description, specification, quantity, srp, actual_price, isbought }) => ({
         item_name,
         description,
         specification,
@@ -344,258 +186,114 @@ const ListItems = () => {
         list_id: newList.id,
       }));
 
-      const { error: copyError } = await supabase
-        .from("list_items")
-        .insert(itemsToCopy);
-
-      if (copyError) throw copyError;
-
-      alert("List duplicated successfully!");
+      await supabase.from("list_items").insert(copiedItems);
       navigate(`/list/${newList.id}`);
-    } catch (err) {
-      console.error("Failed to duplicate list:", err);
-      alert("An error occurred while duplicating the list.");
+    } catch {
+      alert("Failed to duplicate list");
     }
   };
 
+  const handleCopyShareLink = () => {
+    navigator.clipboard.writeText(`${window.location.origin}/list/${listId}`)
+      .then(() => alert("Share link copied!"))
+      .catch(() => alert("Failed to copy link"));
+  };
 
-  if (loading) {
-    return (
-      <div className="page-container">
-        <div className="loading-state">Loading items...</div>
-      </div>
-    );
-  }
+  const total = items.reduce((sum, i) => sum + ((i.actual_price || i.srp || 0) * (i.quantity || 1)), 0);
+  const change = budget ? budget - total : 0;
+  const isOwner = userId === listOwnerId;
 
-  if (error) {
-    return (
-      <div className="page-container">
-        <Navigation />
-        <div className="error-state">{error}</div>
-        <div className="page-actions">
-          <button className="page-button retry" onClick={fetchListItems}>
-            Retry
-          </button>
-          <button className="page-button back" onClick={() => navigate("/search-lists")}>
-            Back to Lists
-          </button>
-        </div>
-            
-      </div>
-    );
-  }
-  
+  if (loading) return <div className="loading-state">Loading...</div>;
+  if (error) return <div className="error-state">{error}</div>;
 
   return (
-    <div className="card-container">
-      <div className="list-items-container">
-        <div className="page-header-li">
-          <div className="title-section">
-            {isEditingName ? (
-              <div className="title-edit-container">
-                <input
-                  type="text"
-                  value={editedName}
-                  onChange={(e) => setEditedName(e.target.value)}
-                  onBlur={handleNameEdit}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') {
-                      handleNameEdit();
-                    } else if (e.key === 'Escape') {
-                      setIsEditingName(false);
-                      setEditedName(listName);
-                    }
-                  }}
-                  className="title-edit-input"
-                  autoFocus
-                />
-              </div>
-            ) : (
-              <h1 
-                className="page-title-li" 
-                onClick={() => {
-                  if (isOwner) {
-                    setIsEditingName(true);
-                    setEditedName(listName);
-                  }
-                }}
-              >
-                {listName}
-                {isOwner && <span className="edit-icon">✎</span>}
-              </h1>
-            )}
-            {creatorInfo && (
-              <div className="creator-info">
-                Created by: {creatorInfo.nickname || creatorInfo.name}
-              </div>
-            )}
-            {isOwner && (
-              <div className="list-privacy-controls">
-                <button
-                  className={`privacy-toggle ${isPublic ? 'public' : 'private'}`}
-                  onClick={handleTogglePrivacy}
-                >
-                  {isPublic ? 'Public' : 'Private'}
-                </button>
-                {isPublic && (
-                  <button
-                    className="share-link-button"
-                    onClick={handleCopyShareLink}
-                  >
-                    <FaShareAlt /> Share Link
-                  </button>
-                )}
-              </div>
-            )}
-          </div>
-          <button className="back-button" onClick={() => navigate("/search-lists")}>
+    <div className="list-items-container">
+      <div className="list-header">
+        {isEditingName ? (
+          <input value={editedName} onChange={e => setEditedName(e.target.value)}
+                 onBlur={() => setIsEditingName(false)} autoFocus className="title-edit-input" />
+        ) : (
+          <h1 className="page-title-li" onClick={() => isOwner && (setIsEditingName(true), setEditedName(listName))}>
+            {listName} {isOwner && <FaEdit className="edit-icon" />}
+            <button className="page-button back" onClick={() => navigate("/search-lists")}>
             Back to Lists
-          </button>
-        </div>
-        
-        <div className="search-container">
-          <input
-            type="text"
-            placeholder="Search items..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="search-input"
-          />
-        </div>
+            </button> 
+          </h1>
+        )}
+        {creatorInfo && <div className="creator-info-li">By: {creatorInfo.nickname || creatorInfo.name}</div>}
+        {isOwner && (
+          <div className="list-privacy-controls">
+            <button className={`privacy-toggle ${isPublic ? 'public' : 'private'}`} onClick={handleTogglePrivacy}>
+              {isPublic ? "Public" : "Private"}
+            </button>
+            {isPublic && <button className="share-link-button" onClick={handleCopyShareLink}><FaShareAlt /> Share</button>}
+          </div>
+        )}
+      </div>
 
-        <div className="items-list">
-          {filteredItems.length === 0 ? (
-            <div className="empty-state">
-              <h1>No items found</h1>
-              <button className="goto-items-button" onClick={() => navigate(`/search-items?listName=${encodeURIComponent(listName)}`)}>
-                Go to Items
-              </button>
-            </div>
-          ) : (
-            filteredItems.map((item) => {
-              const unitPrice = item.actual_price != null ? item.actual_price : item.srp || 0;
-              const subtotal = unitPrice * (item.quantity || 1);
-              return (
-                <div key={item.id} className="list-item-card">
-                  <div className="item-content">
-                    <div className="item-checkbox">
-                      <input
-                        type="checkbox"
-                        checked={item.isbought || false}
-                        onChange={(e) => {
-                          e.stopPropagation();
-                          if (!isOwner) return;
-                          handleToggleBought(item.id, item.isbought);
-                        }}
-                        disabled={!isOwner}
-                      />
-                    </div>
-                    <h3 className="item-name" onClick={() => setSelectedItem(item)}>
-                      {item.item_name}
-                    </h3>
-                    <div className="quantity-control">
-                      <button
-                        className="quantity-btn minus"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleQuantityChange(item.id, item.quantity - 1);
-                        }}
-                        disabled={!isOwner}
-                      >
-                        −
-                      </button>
-                      <span className="quantity-value">x{item.quantity}</span>
-                      <button
-                        className="quantity-btn plus"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleQuantityChange(item.id, item.quantity + 1);
-                        }}
-                        disabled={!isOwner}
-                      >
-                        +
-                      </button>
-                    </div>
-                  </div>
-                  <div className="second-part">
-                    <div className="price-input">
-                      <div className={`price-label ${item.actual_price === null ? 'active' : ''}`}>
-                        SRP: ₱{item.srp?.toLocaleString() || "0"}
-                      </div>                      
-                        <input
-                          type="text"
-                          inputMode="decimal"
-                          placeholder="Enter actual price"
-                          value={item.actual_price ?? ""}
-                          onChange={(e) => {
-                            e.stopPropagation();
-                            if (!isOwner) return;
-                            const raw = e.target.value.replace(/[^\d.]/g, "");
-                            const value = raw === "" ? null : parseFloat(raw);
-                            handleUpdateActualPrice(item.id, value);
-                          }}
-                          onClick={(e) => e.stopPropagation()}
-                          disabled={!isOwner}
-                        />
-                  </div>
-                    <div className="subtotal-li">
-                      <span className="amount">Subtotal: ₱{subtotal.toLocaleString()}</span>
-                      {isOwner && (
-                        <div class="item-actions-li">
-                          <button
-                            className="edit-button"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setSelectedItem(item);
-                            }}
-                          >
-                            <FaEdit />
-                          </button>
-                          <button
-                            className="delete-button"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleDeleteItem(item.id);
-                            }}
-                          >
-                            <FaTrash />
-                          </button>
-                        </div>
-                      )}
-                    </div>
-                    </div>
+      <input className="search-input" placeholder="Search items..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} />
+
+      <div className="items-list">
+        {filteredItems.map(item => {
+          const unitPrice = item.actual_price || item.srp || 0;
+          return (
+            <div className={`list-item-card${item.isbought ? " bought" : ""}`} key={item.id}>
+              <div className="item-content">
+                <div className="item-checkbox">
+                  <input
+                    type="checkbox"
+                    checked={item.isbought || false}
+                    onChange={() => handleToggleBought(item.id, item.isbought)}
+                  />
                 </div>
-              );
-            })
-          )}
-        </div>
+                <div className="item-name" onClick={() => !item.isbought && setSelectedItem(item)}>{item.item_name}</div>
+                <div className="quantity-control">
+                  <button onClick={() => handleQuantityChange(item.id, item.quantity - 1)} disabled={!isOwner || item.isbought}>−</button>
+                  <span>x{item.quantity}</span>
+                  <button onClick={() => handleQuantityChange(item.id, item.quantity + 1)} disabled={!isOwner || item.isbought}>+</button>
+                </div>
+              </div>
+              <div className="second-part">
+                <span className="price-label">SRP: ₱{item.srp?.toLocaleString() || 0}</span>
+                <div className="price-input">
+                  <input style={{ maxWidth: 'fit-content' }} type="text" value={item.actual_price ?? ""} onChange={e => {
+                    const val = e.target.value.replace(/[^\d.]/g, "");
+                    handleUpdateActualPrice(item.id, val === "" ? null : parseFloat(val));
+                  }} disabled={!isOwner || item.isbought} />
+                  <span className="amount">= ₱{(unitPrice * (item.quantity || 1)).toLocaleString()}
+                  {isOwner && !item.isbought && (
+                    <span className="item-actions-li">
+                      <button className="edit-button" onClick={() => setSelectedItem(item)}><FaEdit /></button>
+                      <button className="delete-button" onClick={() => handleDeleteItem(item.id)}><FaTrash /></button>
+                    </span>
+                  )}
+                  </span>
+                </div>
+                      
+              </div>
+            </div>
+          );
+        })}
+      </div>
 
-        <div className="list-footer">
-          <div className="total-section">
-            <span className="duplicate-btn">
-              {isOwner && (
-               <button className="duplicate-list-button" onClick={handleDuplicateList}>
-                <FaCopy /> Duplicate List
-               </button>  
-             )}  
-            </span>
-            <span className="total-label">Total:</span>
-            <span className="total-amount">₱{totalPrice.toLocaleString()}</span>
+      <div className="list-footer">
+        <div className="total-section">
+          {isOwner && <button className="duplicate-list-button" onClick={handleDuplicateList}><FaCopy /> Duplicate List</button>}
+          <div>
+            <div className="total-label">Total: ₱{total.toLocaleString()}</div>
+          </div>
+        </div>
+        <div className="budget-section" style={{ marginTop: '1rem' }}>
+          <label htmlFor="budget">Budget: <input id="budget" type="number" value={budget} onChange={e => setBudget(Number(e.target.value))}/></label>
+          <div className="change-display" style={{ marginTop: '0.5rem' }}>
+            Change: ₱{change.toLocaleString()}
           </div>
         </div>
       </div>
 
-      {selectedItem && (
-        <ListItemInfoModal
-          item={selectedItem}
-          onClose={() => setSelectedItem(null)}
-          onItemUpdated={handleItemUpdated}
-          onItemDeleted={handleItemDeleted}
-          isOwner={isOwner}
-        />
-      )}
+      {selectedItem && <ListItemInfoModal item={selectedItem} onClose={() => setSelectedItem(null)} isOwner={isOwner} />}
     </div>
   );
 };
 
-export default ListItems; 
+export default ListItems;
